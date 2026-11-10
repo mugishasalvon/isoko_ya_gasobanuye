@@ -33,6 +33,7 @@ img { display: block; max-width: 100%; }
 .main-content { min-height: 75vh; }
 .site-header { position: absolute; z-index: 20; top: 0; left: 0; width: 100%; height: 78px; display: flex; align-items: center; padding: 0 5.2%; gap: 48px; border-bottom: 1px solid rgba(255,255,255,.075); background: linear-gradient(180deg,rgba(8,8,10,.64),rgba(8,8,10,.18)); backdrop-filter: blur(13px); }
 .brand { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 10px; font-family: var(--display); font-size: 20px; font-weight: 800; letter-spacing: -.9px; }
+.brand-logo { display: block; width: auto; height: 34px; }
 .brand-mark { width: 31px; height: 31px; display: grid; place-items: center; color: #10120b; background: var(--lime); border-radius: 9px; }
 .brand-name { font-size: 15px; letter-spacing: -.45px; white-space: nowrap; }
 .brand-light { color: #a4a2a7; font-weight: 500; }
@@ -164,8 +165,13 @@ img { display: block; max-width: 100%; }
 .footer-brand { color: #edecee; font-size: 16px; }
 .footer-brand .brand-name { font-size: 12px; }
 .footer-brand .brand-mark { width: 26px; height: 26px; }
+.footer-brand-logo { height: 30px; }
 .site-footer nav { display: flex; flex-wrap: wrap; gap: 10px 20px; margin-left: auto; }
 .site-footer nav a:hover { color: #fff; }
+.footer-socials { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.footer-socials a { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; color: #b8b6bc; background: rgba(255,255,255,.04); border: 1px solid var(--stroke); border-radius: 50%; transition: color .18s, background .18s, border-color .18s; }
+.footer-socials a:hover { color: #fff; background: rgba(255,255,255,.08); border-color: rgba(211,243,107,.28); }
+.footer-socials svg { width: 16px; height: 16px; }
 .site-subfooter { flex: 0 0 100%; margin: 0 -5.82%; padding: 12px 5.82%; border-top: 1px solid var(--stroke); text-align: center; }
 .site-subfooter small { color: #77767c; font-size: 9px; }
 
@@ -184,13 +190,14 @@ img { display: block; max-width: 100%; }
 .privacy-list { display: grid; gap: 9px; margin: 14px 0 0; padding-left: 19px; color: #aaa8ae; font-size: 11px; line-height: 1.7; }
 .privacy-list li::marker { color: var(--lime); }
 .privacy-effective-date { color: #dedce0 !important; }
-.support-contact-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; margin-top: 15px; }
-.support-contact-card { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; padding: 17px; background: rgba(255,255,255,.025); border: 1px solid var(--stroke); border-radius: 6px; }
-.support-contact-card > svg { color: var(--lime); }
-.support-contact-card h2,.support-hours-grid h2 { margin: 12px 0 5px; font-family: var(--display); font-size: 16px; }
-.support-contact-card p { min-height: 34px; margin: 0 0 15px; color: #a7a5ab; font-size: 10px; line-height: 1.6; }
-.support-contact-card .button { min-height: 35px; margin-top: auto; font-size: 9px; }
-.support-phone { margin: -4px 0 13px; color: #e7e5e8; font-size: 11px; }
+.support-contact-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; margin-top: 18px; }
+.support-contact-card { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; padding: 22px 20px; background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.02)); border: 1px solid rgba(255,255,255,.1); border-radius: 12px; box-shadow: 0 10px 28px rgba(0,0,0,.18); transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+.support-contact-card:hover { transform: translateY(-3px); border-color: rgba(211,243,107,.28); box-shadow: 0 14px 34px rgba(0,0,0,.24); }
+.support-contact-card > svg { width: 40px; height: 40px; padding: 9px; color: var(--lime); background: rgba(211,243,107,.08); border: 1px solid rgba(211,243,107,.18); border-radius: 10px; }
+.support-contact-card h2,.support-hours-grid h2 { margin: 14px 0 6px; font-family: var(--display); font-size: 18px; color: #f0eff2; }
+.support-contact-card p { min-height: 34px; margin: 0 0 16px; color: #b2b0b7; font-size: 11px; line-height: 1.65; }
+.support-contact-card .button { min-height: 36px; margin-top: auto; font-size: 9px; }
+.support-phone { margin: -2px 0 14px; color: #e7e5e8; font-size: 13px; font-weight: 600; letter-spacing: .2px; }
 .copyright-section > h2 { margin: 11px 0; font-family: var(--display); font-size: 22px; }
 .copyright-section > p,.copyright-section li span { color: #aaa8ae; font-size: 11px; line-height: 1.7; }
 .copyright-section ol { display: grid; gap: 12px; margin: 17px 0; padding-left: 22px; }
@@ -649,6 +656,7 @@ img { display: block; max-width: 100%; }
   .site-footer > span { flex-basis: calc(100% - 150px); font-size: 9px; }
   .site-footer nav { order: 2; flex-basis: 100%; margin: 2px 0 0; }
   .site-footer nav { gap: 10px 15px; }
+  .footer-socials { order: 3; margin-left: 0; }
   .site-subfooter { margin-right: -5.56%; margin-left: -5.56%; padding-right: 5.56%; padding-left: 5.56%; }
   .support-page { padding: 108px 5% 55px; }
   .support-page .page-intro { margin-bottom: 24px; }
@@ -794,3 +802,14 @@ img { display: block; max-width: 100%; }
 .comment-meta time { color: #89878d; font-size: 9px; }
 .comment-item p { margin: 0; color: #c5c3c9; font-size: 11px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+.comment-form label { display: grid; gap: 5px; color: #aaa8ae; font-size: 9px; }
+.comment-form input { width: 100%; padding: 10px 12px; color: #f2f1f3; background: #171719; border: 1px solid var(--stroke); border-radius: 6px; font: inherit; font-size: 12px; }
+.comment-form input:focus { outline: none; border-color: rgba(211,243,107,.4); }
+
+.comment-admin-identity { margin: 0; color: #c5c3c9; font-size: 11px; }
+.comment-admin-identity strong { color: #e7e5e8; }
+.comment-admin-badge { display: inline-flex; align-items: center; padding: 2px 7px; color: #141414; background: var(--lime); border-radius: 10px; font-size: 8px; font-weight: 700; letter-spacing: .3px; text-transform: uppercase; }
+.comment-admin-email { color: #9a98a0; font-size: 9px; }
+.comment-author { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.comment-item.comment-admin { background: rgba(211,243,107,.06); border-color: rgba(211,243,107,.28); }

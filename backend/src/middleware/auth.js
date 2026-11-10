@@ -18,6 +18,22 @@ export function requireAuth(req, res, next) {
   }
 }
 
+export function optionalAuth(req, _res, next) {
+  const token = req.cookies.noirplay_token
+    || req.get('authorization')?.replace(/^Bearer\s+/i, '');
+  if (!token) {
+    req.user = null;
+    return next();
+  }
+  try {
+    const user = jwt.verify(token, config.jwtSecret);
+    req.user = user?.role === 'admin' ? user : null;
+  } catch {
+    req.user = null;
+  }
+  return next();
+}
+
 export function requireAdmin(req, res, next) {
   if (req.user?.role !== 'admin') {
     return res.status(403).json({ error: 'Administrator access is required.' });

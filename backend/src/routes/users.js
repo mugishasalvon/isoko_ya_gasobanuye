@@ -156,33 +156,4 @@ router.get('/downloads', asyncHandler(async (req, res) => {
   res.json({ items });
 }));
 
-router.get('/comments/:kind/:id', asyncHandler(async (req, res) => {
-  const kind = req.params.kind;
-  if (!['movie', 'episode'].includes(kind)) return res.status(400).json({ error: 'Invalid content type.' });
-  const id = z.coerce.number().int().positive().parse(req.params.id);
-  const column = kind === 'movie' ? 'movie_id' : 'episode_id';
-  const [items] = await pool.execute(`SELECT c.id, c.body, c.created_at, u.name AS user_name
-    FROM comments c JOIN users u ON u.id = c.user_id
-    WHERE c.${column} = ? ORDER BY c.created_at DESC LIMIT 100`, [id]);
-  res.json({ items });
-}));
-
-router.post('/comments/:kind/:id', asyncHandler(async (req, res) => {
-  const kind = req.params.kind;
-  if (!['movie', 'episode'].includes(kind)) return res.status(400).json({ error: 'Invalid content type.' });
-  const id = z.coerce.number().int().positive().parse(req.params.id);
-  const input = z.object({ body: z.string().trim().min(1).max(2000) }).parse(req.body);
-  const table = kind === 'movie' ? 'movies' : 'episodes';
-  const [content] = await pool.execute(`SELECT id FROM ${table} WHERE id = ? LIMIT 1`, [id]);
-  if (!content[0]) return res.status(404).json({ error: 'Content not found.' });
-  const column = kind === 'movie' ? 'movie_id' : 'episode_id';
-  const [result] = await pool.execute(
-    `INSERT INTO comments (user_id, ${column}, body) VALUES (?, ?, ?)`,
-    [req.user.id, id, input.body]
-  );
-  const [rows] = await pool.execute(`SELECT c.id, c.body, c.created_at, u.name AS user_name
-    FROM comments c JOIN users u ON u.id = c.user_id WHERE c.id = ? LIMIT 1`, [result.insertId]);
-  res.status(201).json({ item: rows[0] });
-}));
-
 export default router;

@@ -80,9 +80,8 @@ function Header() {
 
   return (
     <header className="site-header">
-      <Link to="/" className="brand" aria-label="OSHAkurFilms home">
-        <span className="brand-mark"><Clapperboard size={20} strokeWidth={2.2} /></span>
-        <span className="brand-name">OSHAkurFilms <span className="brand-light">FILMS HUB</span></span>
+      <Link to="/" className="brand" aria-label="SANSARFILMS HUB home">
+        <img src="/logo.svg" alt="SANSARFILMS HUB" className="brand-logo" />
       </Link>
       <button className="mobile-menu icon-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
         {menuOpen ? <X size={21} /> : <Menu size={21} />}
@@ -234,10 +233,24 @@ function SearchBox({ className, placeholder, initialValue = '', autoFocus = fals
 function Footer() {
   return (
     <footer className="site-footer">
-      <Link to="/" className="brand footer-brand"><span className="brand-mark"><Clapperboard size={17} /></span><span className="brand-name">OSHAkurFilms <span className="brand-light">FILMS HUB</span></span></Link>
+      <Link to="/" className="brand footer-brand"><img src="/logo.svg" alt="SANSARFILMS HUB" className="brand-logo footer-brand-logo" /></Link>
       <span>Stories worth staying in for.</span>
       <nav><Link to="/about">About Us</Link><Link to="/contact">Contact Us</Link><Link to="/categories">Explore</Link><Link to="/privacy">Privacy Policy</Link><Link to="/terms">Terms &amp; Conditions</Link></nav>
-      <div className="site-subfooter"><small>© 2026 OSHAkurFilms</small></div>
+      <div className="footer-socials" aria-label="Social media">
+        <a href="https://www.facebook.com/share/1FHTa9i5eg/" target="_blank" rel="noreferrer" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.5 21v-8.25h2.77l.41-3.21H13.5V7.49c0-.93.26-1.56 1.59-1.56h1.7V3.06c-.29-.04-1.3-.12-2.48-.12-2.45 0-4.13 1.5-4.13 4.24v2.36H7.41v3.21h2.77V21h3.32Z"/></svg>
+        </a>
+        <a href="https://youtube.com/@amabangayinkuru?si=R2HyErSCiS8TJX7d" target="_blank" rel="noreferrer" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.58 7.19a2.5 2.5 0 0 0-1.76-1.77C18.26 5 12 5 12 5s-6.26 0-7.82.42a2.5 2.5 0 0 0-1.76 1.77A26.1 26.1 0 0 0 2 12a26.1 26.1 0 0 0 .42 4.81 2.5 2.5 0 0 0 1.76 1.77C5.74 19 12 19 12 19s6.26 0 7.82-.42a2.5 2.5 0 0 0 1.76-1.77A26.1 26.1 0 0 0 22 12a26.1 26.1 0 0 0-.42-4.81ZM10 15.46V8.54L15.18 12 10 15.46Z"/></svg>
+        </a>
+        <a href="https://tiktok.com/@isoko_yagasobanuye" target="_blank" rel="noreferrer" aria-label="TikTok">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.59 7.2a4.83 4.83 0 0 1-3.2-1.2 4.92 4.92 0 0 1-1.62-2.76V3h-3.1v12.2a2.88 2.88 0 1 1-2.88-2.88c.3 0 .59.05.87.14V9.3a6 6 0 1 0 5.1 5.93V9.01a7.93 7.93 0 0 0 4.83 1.61V7.5c0-.1 0-.2 0-.3Z"/></svg>
+        </a>
+        <a href="https://whatsapp.com/channel/0029VbAK2dILdQebzEBD113v" target="_blank" rel="noreferrer" aria-label="WhatsApp Channel">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 2a9.94 9.94 0 0 0-8.5 15.12L2 22l4.99-1.5A9.95 9.95 0 1 0 12.04 2Zm0 18.2a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-2.96.89.9-2.88-.2-.3a8.24 8.24 0 1 1 6.74 3.61Zm4.52-6.17c-.25-.13-1.47-.73-1.7-.81-.23-.09-.4-.13-.56.12-.17.25-.64.81-.79.98-.14.16-.29.19-.54.06-.25-.12-1.05-.39-2-1.23a7.5 7.5 0 0 1-1.38-1.72c-.15-.25-.02-.39.1-.51.12-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.16.04-.31-.02-.43-.06-.13-.56-1.36-.77-1.86-.2-.48-.41-.41-.56-.42h-.48c-.17 0-.43.06-.66.31-.23.25-.87.85-.87 2.07s.89 2.4 1.02 2.56c.12.17 1.75 2.67 4.24 3.75.59.25 1.05.4 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.2-.58.2-1.07.14-1.18-.06-.1-.23-.16-.48-.29Z"/></svg>
+        </a>
+      </div>
+      <div className="site-subfooter"><small>© 2026 SANSARFILMS HUB</small></div>
       <MobileBottomNav />
     </footer>
   );
@@ -262,7 +275,7 @@ function MovieCard({ movie, rank, variant = 'poster', watchDirect = false, showD
   const toggleSaved = async (event) => {
     event.preventDefault();
     event.stopPropagation();
-    if (!user) return navigate('/login');
+    if (!user) return;
     try {
       if (saved) {
         await api.delete(`/users/watchlist/${isSeries ? 'series' : 'movie'}/${isSeries ? movie.series_id || movie.id : movie.id}`);
@@ -272,8 +285,7 @@ function MovieCard({ movie, rank, variant = 'poster', watchDirect = false, showD
         setSaved(true);
       }
     } catch (error) {
-      if (error.response?.status === 401) navigate('/login');
-      else window.alert(getErrorMessage(error));
+      window.alert(getErrorMessage(error));
     }
   };
   if (!title) return null;
@@ -288,9 +300,9 @@ function MovieCard({ movie, rank, variant = 'poster', watchDirect = false, showD
             <span className="poster-quick">{watchDirect ? 'Watch movie' : 'View title'}</span>
           </div>
         </Link>
-        <button className={`save-card ${saved ? 'is-saved' : ''}`} onClick={toggleSaved} aria-label="Add to watchlist">
+        {user && <button className={`save-card ${saved ? 'is-saved' : ''}`} onClick={toggleSaved} aria-label="Add to watchlist">
           {saved ? <Check size={16} /> : <Plus size={16} />}
-        </button>
+        </button>}
         {movie.age_rating && <span className="poster-rating">{movie.age_rating}</span>}
       </div>
       <div className="card-copy">
@@ -374,7 +386,7 @@ function HomePage() {
         <div className="hero-content">
           <div className="hero-kicker"><span className="live-dot" /><span>LATEST MOVIES &amp; SERIES</span></div>
           {activeItem ? <>
-            <div className="hero-title-line"><span className="hero-accent">NEW TO OSHAkurFilms</span><span className="hero-label">JUST ADDED</span></div>
+            <div className="hero-title-line"><span className="hero-accent">NEW TO SANSARFILMS HUB</span><span className="hero-label">JUST ADDED</span></div>
             <h1>{activeItem.title}</h1>
             <div className="hero-meta">
               <span>{activeItem.content_type === 'series' ? 'Series' : activeItem.release_year || 'New release'}</span>
@@ -391,7 +403,7 @@ function HomePage() {
                 className="button button-glass"><Info size={17} /> Details</Link>
             </div>
           </> : <>
-            <div className="hero-title-line"><span className="hero-accent">THE OSHAkurFilms COLLECTION</span></div>
+            <div className="hero-title-line"><span className="hero-accent">THE SANSARFILMS HUB COLLECTION</span></div>
             <h1>{loading ? 'Finding your next story.' : 'New stories are on the way.'}</h1>
             <p>{error || 'New additions to the collection will appear here.'}</p>
           </>}
@@ -411,7 +423,7 @@ function HomePage() {
         </div>
       </section>
       <div className="home-catalog standard-page">
-        <PageIntro label="THE OSHAkurFilms COLLECTION" title="Movies & series" description="Browse the latest movies and series together. Choose a poster to see its details." />
+        <PageIntro label="THE SANSARFILMS HUB COLLECTION" title="Movies & series" description="Browse the latest movies and series together. Choose a poster to see its details." />
         <div className="home-catalog-summary"><span><Film size={15} /> {data?.total ?? 0} titles</span><span>Newest first</span></div>
         {loading ? <div className="catalog-grid">{Array.from({ length: 10 }, (_, index) => <div key={index} className="skeleton-card" />)}</div>
           : error ? <div className="state-box"><Info size={22} /><p>{error}</p><small>Check that the API is running and your database has been set up.</small></div>
@@ -542,7 +554,7 @@ function MovieDetailsPage() {
         </div>
         <div className="series-hero-copy">
           <Link to="/movies" className="back-link"><ArrowLeft size={15} /> All movies</Link>
-          <span className="eyebrow">OSHAkurFilms COLLECTION</span><h1>{movie.title}</h1>
+          <span className="eyebrow">SANSARFILMS HUB COLLECTION</span><h1>{movie.title}</h1>
           <div className="details-meta"><span className="detail-rating"><Star size={14} fill="currentColor" /> {Number(movie.rating).toFixed(1)}</span><span>{movie.release_year}</span><span>{movie.duration_minutes ? `${movie.duration_minutes} min` : 'Feature film'}</span>{movie.age_rating && <span className="age-badge">{movie.age_rating}</span>}</div>
           <div className="detail-genres">{movie.genres?.map((genre) => <span key={genre}>{genre}</span>)}</div>
           <p className="details-description">{movie.description}</p>
@@ -580,11 +592,11 @@ function RatingForm({ type, id }) {
       setStatus(`Thanks for rating this ${type}. Current score: ${data.rating ?? rating}/10.`);
     } catch (requestError) { setError(getErrorMessage(requestError)); }
   };
+  if (!user) return null;
   return <form className="rating-form" onSubmit={submit}>
     <label htmlFor={`rating-${type}-${id}`}>Your rating</label>
     <select id={`rating-${type}-${id}`} value={rating} onChange={(event) => setRating(event.target.value)}>{Array.from({ length: 10 }, (_, index) => <option key={index + 1} value={index + 1}>{index + 1} / 10</option>)}</select>
-    {user ? <button className="button button-muted button-small">Rate this title</button>
-      : <Link className="button button-muted button-small" to="/login">Sign in to rate</Link>}
+    <button className="button button-muted button-small">Rate this title</button>
     {status && <span>{status}</span>}{error && <span className="form-error">{error}</span>}
   </form>;
 }
@@ -592,15 +604,13 @@ function RatingForm({ type, id }) {
 function DownloadButton({ kind, id, qualities = [] }) {
   const options = qualities.length ? qualities : ['original'];
   const [quality, setQuality] = useState(options[0]);
-  const { user } = useAuth();
-  const navigate = useNavigate();
   const optionKey = options.join(',');
   useEffect(() => { setQuality(options[0]); }, [id, kind, optionKey]);
   return <div className="download-control">
     {options.length > 1 && <select className="download-quality" value={quality} onChange={(event) => setQuality(event.target.value)} aria-label="Download quality">
       {options.map((option) => <option key={option} value={option}>{option === 'original' ? 'Original' : option}</option>)}
     </select>}
-    <a className="button button-glass" href={`${api.defaults.baseURL}/media/${kind}/${id}/download?quality=${encodeURIComponent(quality)}`} onClick={(event) => { if (!user) { event.preventDefault(); navigate('/login'); } }}>
+    <a className="button button-glass" href={`${api.defaults.baseURL}/media/${kind}/${id}/download?quality=${encodeURIComponent(quality)}`}>
       <ArrowDownToLine size={17} /> Download{options.length === 1 && options[0] !== 'original' ? ` · ${options[0]}` : ''}
     </a>
   </div>;
@@ -706,7 +716,7 @@ function AuthPage() {
       navigate('/admin');
     } catch (err) { setError(getErrorMessage(err)); } finally { setBusy(false); }
   };
-  return <div className="auth-page"><div className="auth-aside"><div className="auth-art" /><span className="eyebrow">OSHAkurFilms ADMINISTRATION</span><h2>Manage the stories worth staying in for.</h2><p>Administrator sign-in is required to manage the OSHAkurFilms catalogue.</p></div><form className="auth-card" onSubmit={submit}><span className="eyebrow">ADMIN ACCESS</span><h1>Administrator sign in.</h1><p>Sign in with your private administrator credentials.</p><label>Email address<input name="email" type="email" autoComplete="username" required placeholder="Admin email address" /></label><label>Password<input name="password" type="password" autoComplete="current-password" required placeholder="Administrator password" /></label>{error && <p className="form-error">{error}</p>}<button className="button button-primary auth-submit" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'} <ArrowRight size={17} /></button></form></div>;
+  return <div className="auth-page"><div className="auth-aside"><div className="auth-art" /><span className="eyebrow">SANSARFILMS HUB ADMINISTRATION</span><h2>Manage the stories worth staying in for.</h2><p>Administrator sign-in is required to manage the SANSARFILMS HUB catalogue.</p></div><form className="auth-card" onSubmit={submit}><span className="eyebrow">ADMIN ACCESS</span><h1>Administrator sign in.</h1><p>Sign in with your private administrator credentials.</p><label>Email address<input name="email" type="email" autoComplete="username" required placeholder="Admin email address" /></label><label>Password<input name="password" type="password" autoComplete="current-password" required placeholder="Administrator password" /></label>{error && <p className="form-error">{error}</p>}<button className="button button-primary auth-submit" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'} <ArrowRight size={17} /></button></form></div>;
 }
 
 function WatchPage() {
@@ -715,7 +725,7 @@ function WatchPage() {
   const navigate = useNavigate();
   const media = useRemote(kind === 'episode'
     ? `/content/episodes/${encodeURIComponent(id)}`
-    : `/content/movies/id/${encodeURIComponent(id)}`, Boolean(user));
+    : `/content/movies/id/${encodeURIComponent(id)}`);
   const history = useRemote('/users/history', Boolean(user));
   const [error, setError] = useState('');
   const lastSaved = useRef(0);
@@ -725,11 +735,11 @@ function WatchPage() {
   const qualityKey = item?.download_qualities?.join(',') || '';
   const videoRef = useCallback((node) => {
     videoElement.current = node;
-    if (!node || !user || !item || !qualityKey) return undefined;
+    if (!node || !item || !qualityKey) return undefined;
     const url = `${api.defaults.baseURL}/media/${kind}/${id}/stream`;
     node.src = url;
     return () => { node.removeAttribute('src'); node.load(); };
-  }, [id, item, kind, qualityKey, user]);
+  }, [id, item, kind, qualityKey]);
   useEffect(() => {
     if (item && !qualityKey) {
       setError('No video file is available for this title yet. An admin can upload one from Dashboard → Movies. The banner image is shown above in the meantime.');
@@ -769,7 +779,6 @@ function WatchPage() {
   };
   const nextEpisode = item?.next_episode;
   const title = kind === 'episode' ? `${item?.series_title || ''}${item?.season_number ? ` · Season ${item.season_number}` : ''}` : '';
-  if (!user) return <div className="watch-gate"><Shield size={29} /><span className="eyebrow">YOUR PRIVATE CINEMA</span><h1>Sign in to press play.</h1><p>Watching history and access to authorized media are linked to your account.</p><Link className="button button-primary" to="/login">Sign in to continue <ArrowRight size={16} /></Link></div>;
   return <div className="watch-page">
     <Link to={kind === 'movie' ? '/movies' : '/series'} className="back-link"><ArrowLeft size={15} /> Back to browsing</Link>
     <div className="video-frame"><video ref={videoRef} poster={assetUrl(item?.banner_url || item?.poster_url) || undefined} controls autoPlay playsInline crossOrigin="use-credentials"
@@ -791,28 +800,32 @@ function WatchPage() {
 
 function CommentsSection({ kind, id }) {
   const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [body, setBody] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const load = useCallback(async () => {
-    if (!user) { setLoading(false); return; }
     try {
-      const { data } = await api.get(`/users/comments/${kind}/${id}`);
+      const { data } = await api.get(`/content/comments/${kind}/${id}`);
       setItems(data.items || []);
       setError('');
     } catch (err) { setError(getErrorMessage(err)); }
     finally { setLoading(false); }
-  }, [id, kind, user]);
+  }, [id, kind]);
   useEffect(() => { load(); }, [load]);
   const submit = async (event) => {
     event.preventDefault();
     if (!body.trim() || busy) return;
+    if (!isAdmin && (!name.trim() || !email.trim())) return;
     setBusy(true);
     try {
-      const { data } = await api.post(`/users/comments/${kind}/${id}`, { body: body.trim() });
-      setItems((prev) => [data.item, ...prev]);
+      const payload = isAdmin ? { body: body.trim() } : { name: name.trim(), email: email.trim(), body: body.trim() };
+      const { data } = await api.post(`/content/comments/${kind}/${id}`, payload);
+      setItems((prev) => [data.item, ...prev].sort((a, b) => (Number(b.is_admin) - Number(a.is_admin)) || (new Date(b.created_at) - new Date(a.created_at))));
       setBody('');
       setError('');
     } catch (err) { setError(getErrorMessage(err)); }
@@ -821,13 +834,15 @@ function CommentsSection({ kind, id }) {
   return <section className="comments-section">
     <h2>Comments</h2>
     <form className="comment-form" onSubmit={submit}>
-      <label htmlFor="comment-body" className="sr-only">Add a comment</label>
-      <textarea id="comment-body" value={body} onChange={(event) => setBody(event.target.value)} rows="3" maxLength="2000" placeholder="Share your thoughts…" />
-      <button className="button button-primary button-small" type="submit" disabled={busy || !body.trim()}>{busy ? 'Posting…' : 'Post comment'}</button>
+      {isAdmin ? <p className="comment-admin-identity">Commenting as <strong>{user.name}</strong>{user.email ? <span> ({user.email})</span> : ''} <span className="comment-admin-badge">Admin</span></p>
+        : <><label>Name<input value={name} onChange={(event) => setName(event.target.value)} required maxLength="100" placeholder="Your name" /></label>
+          <label>Email<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required maxLength="254" placeholder="Your email" /></label></>}
+      <label>Message<textarea value={body} onChange={(event) => setBody(event.target.value)} rows="3" maxLength="2000" required placeholder="Share your thoughts…" /></label>
+      <button className="button button-primary button-small" type="submit" disabled={busy || !body.trim() || (!isAdmin && (!name.trim() || !email.trim()))}>{busy ? 'Posting…' : 'Post comment'}</button>
     </form>
     {error && <p className="form-error">{error}</p>}
     {loading ? <p className="empty-inline">Loading comments…</p>
-      : items.length ? <div className="comment-list">{items.map((comment) => <article className="comment-item" key={comment.id}><div className="comment-meta"><strong>{comment.user_name}</strong><time>{new Date(comment.created_at).toLocaleString()}</time></div><p>{comment.body}</p></article>)}</div>
+      : items.length ? <div className="comment-list">{items.map((comment) => <article className={`comment-item ${comment.is_admin ? 'comment-admin' : ''}`} key={comment.id}><div className="comment-meta"><div className="comment-author"><strong>{comment.user_name}</strong>{comment.is_admin && <span className="comment-admin-badge">Admin</span>}{comment.is_admin && comment.user_email && <span className="comment-admin-email">{comment.user_email}</span>}</div><time>{new Date(comment.created_at).toLocaleString()}</time></div><p>{comment.body}</p></article>)}</div>
       : <p className="empty-inline">No comments yet. Be the first to share your thoughts.</p>}
   </section>;
 }
@@ -886,7 +901,7 @@ function ProfilePage() {
     } catch (err) { setProfileError(getErrorMessage(err)); }
     finally { setSavingProfile(false); }
   };
-  return <div className="standard-page profile-page"><PageIntro label="YOUR OSHAkurFilms" title="A little space that's yours." description="Your account, your saved stories, your own pace." /><div className="profile-layout"><aside className="profile-card"><span className="profile-avatar">{user.name.slice(0, 1).toUpperCase()}</span><h2>{user.name}</h2><span>{user.email}</span><small>MEMBER SINCE {new Date(user.created_at || Date.now()).getFullYear()}</small><div className="profile-menu"><Link to="/watchlist"><Bookmark size={16} /> My watchlist <ArrowRight size={15} /></Link><Link to="/continue-watching"><Clock3 size={16} /> Keep watching <ArrowRight size={15} /></Link>{user.role === 'admin' && <Link to="/admin"><Settings size={16} /> Studio dashboard <ArrowRight size={15} /></Link>}<button onClick={signOut}><LogIn size={16} /> Sign out <ArrowRight size={15} /></button></div></aside><div className="profile-info"><section className="profile-edit"><span className="eyebrow">ACCOUNT SETTINGS</span><h2>Make it yours.</h2>{profileError && <p className="form-error">{profileError}</p>}{profileNotice && <p className="profile-notice">{profileNotice}</p>}<form className="admin-form" onSubmit={saveProfile}><label>Display name<input name="name" required minLength="2" maxLength="100" defaultValue={user.name} /></label><label>Email address<input value={user.email} disabled /></label><label>Current password <small>Only required to change your password</small><input name="current_password" type="password" autoComplete="current-password" /></label><label>New password <small>Leave blank to keep your current password</small><input name="new_password" type="password" minLength="8" autoComplete="new-password" /></label><button className="button button-primary" disabled={savingProfile}>{savingProfile ? 'Saving…' : 'Save account settings'}</button></form></section><div className="profile-info-head"><div><span className="eyebrow">RECENT ACTIVITY</span><h2>Your download history</h2></div><ArrowDownToLine size={20} /></div>{loading ? <p className="empty-inline">Loading your library…</p> : data?.items?.length ? data.items.map((item) => <div className="download-row" key={item.id}><Film size={17} /><div><strong>{item.movie_title || item.episode_title}</strong><span>{item.series_title || `Downloaded ${item.quality}`}</span></div><small>{new Date(item.created_at).toLocaleDateString()}</small></div>) : <div className="empty-inline">Your downloads will appear here.</div>}</div></div></div>;
+  return <div className="standard-page profile-page"><PageIntro label="YOUR SANSARFILMS HUB" title="A little space that's yours." description="Your account, your saved stories, your own pace." /><div className="profile-layout"><aside className="profile-card"><span className="profile-avatar">{user.name.slice(0, 1).toUpperCase()}</span><h2>{user.name}</h2><span>{user.email}</span><small>MEMBER SINCE {new Date(user.created_at || Date.now()).getFullYear()}</small><div className="profile-menu"><Link to="/watchlist"><Bookmark size={16} /> My watchlist <ArrowRight size={15} /></Link><Link to="/continue-watching"><Clock3 size={16} /> Keep watching <ArrowRight size={15} /></Link>{user.role === 'admin' && <Link to="/admin"><Settings size={16} /> Studio dashboard <ArrowRight size={15} /></Link>}<button onClick={signOut}><LogIn size={16} /> Sign out <ArrowRight size={15} /></button></div></aside><div className="profile-info"><section className="profile-edit"><span className="eyebrow">ACCOUNT SETTINGS</span><h2>Make it yours.</h2>{profileError && <p className="form-error">{profileError}</p>}{profileNotice && <p className="profile-notice">{profileNotice}</p>}<form className="admin-form" onSubmit={saveProfile}><label>Display name<input name="name" required minLength="2" maxLength="100" defaultValue={user.name} /></label><label>Email address<input value={user.email} disabled /></label><label>Current password <small>Only required to change your password</small><input name="current_password" type="password" autoComplete="current-password" /></label><label>New password <small>Leave blank to keep your current password</small><input name="new_password" type="password" minLength="8" autoComplete="new-password" /></label><button className="button button-primary" disabled={savingProfile}>{savingProfile ? 'Saving…' : 'Save account settings'}</button></form></section><div className="profile-info-head"><div><span className="eyebrow">RECENT ACTIVITY</span><h2>Your download history</h2></div><ArrowDownToLine size={20} /></div>{loading ? <p className="empty-inline">Loading your library…</p> : data?.items?.length ? data.items.map((item) => <div className="download-row" key={item.id}><Film size={17} /><div><strong>{item.movie_title || item.episode_title}</strong><span>{item.series_title || `Downloaded ${item.quality}`}</span></div><small>{new Date(item.created_at).toLocaleDateString()}</small></div>) : <div className="empty-inline">Your downloads will appear here.</div>}</div></div></div>;
 }
 
 function AdminPage() {
@@ -991,33 +1006,33 @@ function CategoryChecks({ items }) {
   return <fieldset className="category-checks"><legend>Genres</legend>{items.map((item) => <label key={item.id}><input type="checkbox" name="category_ids" value={item.id} />{item.name}</label>)}</fieldset>;
 }
 
-function InfoPage({ title }) { return <div className="info-page"><span className="eyebrow">A NOTE FROM OSHAkurFilms</span><h1>{title}</h1><p>We believe a great story can turn an ordinary evening into something worth remembering. OSHAkurFilms is a home for thoughtful films and series, built to make finding your next favorite feel as good as watching it.</p><p>Our collection is published by the people who make it. Every title deserves to be here, and every viewer deserves a calmer way to find it.</p><Link className="button button-primary" to="/discover">Find a story <ArrowRight size={16} /></Link></div>; }
+function InfoPage({ title }) { return <div className="info-page"><span className="eyebrow">A NOTE FROM SANSARFILMS HUB</span><h1>{title}</h1><p>We believe a great story can turn an ordinary evening into something worth remembering. SANSARFILMS HUB is a home for thoughtful films and series, built to make finding your next favorite feel as good as watching it.</p><p>Our collection is published by the people who make it. Every title deserves to be here, and every viewer deserves a calmer way to find it.</p><Link className="button button-primary" to="/discover">Find a story <ArrowRight size={16} /></Link></div>; }
 
 function SupportPage() {
   return <div className="support-page">
-    <PageIntro label="OSHAkurFilms" title="Support & Contact" description="Ukeneye ubundi bufasha cyangwa igitekerezo? Watwandikira." />
+    <PageIntro label="SANSARFILMS HUB" title="Support & Contact" description="Ukeneye ubundi bufasha cyangwa igitekerezo? Watwandikira." />
     <section className="support-section">
       <span className="eyebrow">WHEN YOU NEED ANOTHER HELP</span>
       <div className="support-contact-grid">
         <article className="support-contact-card">
           <MessageCircle size={20} /><h2>WhatsApp</h2><p>Chat with our support team directly.</p>
-          <a className="button button-primary" href="https://wa.me/250789358535" target="_blank" rel="noreferrer">Open WhatsApp <ArrowRight size={15} /></a>
+          <a className="button button-primary" href="https://whatsapp.com/channel/0029VbAK2dILdQebzEBD113v" target="_blank" rel="noreferrer">Open WhatsApp <ArrowRight size={15} /></a>
         </article>
         <article className="support-contact-card">
           <Mail size={20} /><h2>Email</h2><p>Send us an email for detailed inquiries.</p>
-          <a className="button button-muted" href="mailto:support@isatafilez.my">Send Email <ArrowRight size={15} /></a>
+          <a className="button button-muted" href="mailto:mugishasalvon@gmail.com">Send Email <ArrowRight size={15} /></a>
         </article>
         <article className="support-contact-card">
           <Phone size={20} /><h2>Call Support</h2><p>Available during business hours.</p>
-          <a href="tel:+250789358535" className="support-phone">+250 789 358 535</a>
-          <a className="button button-muted" href="tel:+250789358535">Call Now <ArrowRight size={15} /></a>
+          <a href="tel:0796234825" className="support-phone">0796234825</a>
+          <a className="button button-muted" href="tel:0796234825">Call Now <ArrowRight size={15} /></a>
         </article>
       </div>
     </section>
     <section className="support-section copyright-section">
       <span className="eyebrow">COPYRIGHT INFORMATION</span>
       <h2>Respecting intellectual property</h2>
-      <p>OSHAkurFilms respects the intellectual property rights of others. If you believe copyrighted material has been used in a way that constitutes infringement, contact us with:</p>
+      <p>SANSARFILMS HUB respects the intellectual property rights of others. If you believe copyrighted material has been used in a way that constitutes infringement, contact us with:</p>
       <ol>
         <li><strong>Identification of the copyrighted work</strong><span>Describe the work you believe has been infringed.</span></li>
         <li><strong>The URL where the material is located</strong><span>Include the exact URL or URLs where the material appears.</span></li>
@@ -1041,9 +1056,9 @@ function SupportPage() {
 
 function TermsPage() {
   return <div className="support-page">
-    <PageIntro label="OSHAkurFilms" title="Terms & Conditions" description="Effective Date: October 3, 2025" />
+    <PageIntro label="SANSARFILMS HUB" title="Terms & Conditions" description="Effective Date: October 3, 2025" />
     <section className="support-section">
-      <p>By accessing oshakurfilms.com, you agree to the following Terms &amp; Conditions. Please read them carefully.</p>
+      <p>By accessing SANSARFILMS HUB, you agree to the following Terms &amp; Conditions. Please read them carefully.</p>
     </section>
     <section className="support-section">
       <span className="eyebrow">1. ACCEPTANCE OF TERMS</span>
@@ -1058,7 +1073,7 @@ function TermsPage() {
     <section className="support-section">
       <span className="eyebrow">3. INTELLECTUAL PROPERTY</span>
       <h2>Intellectual Property</h2>
-      <p>All original content, branding, and visuals are property of OSHAkurFilms unless otherwise stated. Translated content remains the property of original creators.</p>
+      <p>All original content, branding, and visuals are property of SANSARFILMS HUB unless otherwise stated. Translated content remains the property of original creators.</p>
     </section>
     <section className="support-section">
       <span className="eyebrow">4. FAIR USE DISCLAIMER</span>
@@ -1078,7 +1093,7 @@ function TermsPage() {
     <section className="support-section">
       <span className="eyebrow">6. LIMITATION OF LIABILITY</span>
       <h2>Limitation of Liability</h2>
-      <p>OSHAkurFilms is not liable for any damages resulting from use of the site, including data loss, service interruption, or third-party content.</p>
+      <p>SANSARFILMS HUB is not liable for any damages resulting from use of the site, including data loss, service interruption, or third-party content.</p>
     </section>
     <section className="support-section">
       <span className="eyebrow">7. MODIFICATIONS</span>
@@ -1103,11 +1118,11 @@ function TermsPage() {
 
 function PrivacyPage() {
   return <div className="support-page privacy-page">
-    <PageIntro label="OSHAkurFilms" title="Privacy Policy" description="Protecting your privacy is important to us. This policy explains what information OSHAkurFilms handles and how it is used." />
+    <PageIntro label="SANSARFILMS HUB" title="Privacy Policy" description="Protecting your privacy is important to us. This policy explains what information SANSARFILMS HUB handles and how it is used." />
     <section className="support-section">
       <span className="eyebrow">OUR COMMITMENT</span>
       <h2>Respecting your privacy</h2>
-      <p>We use information only as needed to operate, secure, and improve the service. We do not sell your personal information. Access to account information is limited to people who need it to operate and support OSHAkurFilms.</p>
+      <p>We use information only as needed to operate, secure, and improve the service. We do not sell your personal information. Access to account information is limited to people who need it to operate and support SANSARFILMS HUB.</p>
     </section>
     <section className="support-section">
       <span className="eyebrow">INFORMATION WE HANDLE</span>
@@ -1132,7 +1147,7 @@ function PrivacyPage() {
     <section className="support-section">
       <span className="eyebrow">COOKIES</span>
       <h2>Cookie policy</h2>
-      <p>OSHAkurFilms uses a necessary, HTTP-only sign-in cookie to keep an administrator authenticated. It is not used by the app as an advertising cookie. You can clear cookies in your browser, though doing so may sign you out.</p>
+      <p>SANSARFILMS HUB uses a necessary, HTTP-only sign-in cookie to keep an administrator authenticated. It is not used by the app as an advertising cookie. You can clear cookies in your browser, though doing so may sign you out.</p>
     </section>
     <section className="support-section">
       <span className="eyebrow">SHARING AND SECURITY</span>
@@ -1143,7 +1158,7 @@ function PrivacyPage() {
     <section className="support-section">
       <span className="eyebrow">YOUR CHOICES</span>
       <h2>Questions or account requests?</h2>
-      <p>For questions, access or correction requests, or concerns about information associated with an account, contact us at <a href="mailto:support@isatafilez.my">support@isatafilez.my</a>. We may need to verify your request before acting on it.</p>
+      <p>For questions, access or correction requests, or concerns about information associated with an account, contact us at <a href="mailto:mugishasalvon@gmail.com">mugishasalvon@gmail.com</a>. We may need to verify your request before acting on it.</p>
     </section>
     <section className="support-section">
       <span className="eyebrow">POLICY UPDATES</span>

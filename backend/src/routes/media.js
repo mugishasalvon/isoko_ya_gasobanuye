@@ -6,7 +6,7 @@ import { pipeline } from 'node:stream/promises';
 import { config } from '../config.js';
 import { pool } from '../db/pool.js';
 import { asyncHandler } from '../lib/async-handler.js';
-import { requireAuth } from '../middleware/auth.js';
+import { requireAuth, optionalAuth } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -30,7 +30,7 @@ async function resolveMedia(kind, id, user) {
     const [rows] = await pool.execute(`SELECT id, video_path, external_video_url,
       is_published, downloads_enabled, title
       FROM movies WHERE id = ? LIMIT 1`, [id]);
-    if (!rows[0] || (!rows[0].is_published && user.role !== 'admin')) return null;
+    if (!rows[0] || (!rows[0].is_published && user?.role !== 'admin')) return null;
     return { ...rows[0], mediaColumn: 'movie_id' };
   }
   if (kind === 'episode') {
@@ -38,7 +38,7 @@ async function resolveMedia(kind, id, user) {
       e.downloads_enabled, e.title, sr.is_published AS series_published
       FROM episodes e JOIN seasons se ON se.id = e.season_id
       JOIN series sr ON sr.id = se.series_id WHERE e.id = ? LIMIT 1`, [id]);
-    if (!rows[0] || (!rows[0].is_published || !rows[0].series_published) && user.role !== 'admin') return null;
+    if (!rows[0] || ((!rows[0].is_published || !rows[0].series_published) && user?.role !== 'admin')) return null;
     return { ...rows[0], mediaColumn: 'episode_id' };
   }
   return null;
@@ -78,13 +78,16 @@ async function sendRemoteVideo(req, res, media, download) {
   if (upstream.status !== 416 && !contentType?.startsWith('video/')) {
     return res.status(502).json({ error: 'The configured URL did not return a video stream.' });
   }
-  if (download && !media.downloads_enabled && req.user.role !== 'admin') {
+  if (download && !media.downloads_enabled && req.user?.role !== 'admin') {
     return res.status(403).json({ error: 'Downloads are not enabled for this title.' });
   }
-  if (download) {
+  if (download && req.user) {
     const quality = 'original';
     await pool.execute(`INSERT INTO downloads (user_id, ${media.mediaColumn}, quality) VALUES (?, ?, ?)`,
       [req.user.id, media.id, quality]);
+    res.set('Content-Disposition',
+      `attachment; filename="${path.basename(media.title).replace(/[\r\n"\\]/g, '_')}.mp4"`);
+  } else if (download) {
     res.set('Content-Disposition',
       `attachment; filename="${path.basename(media.title).replace(/[\r\n"\\]/g, '_')}.mp4"`);
   }
@@ -107,7 +110,7 @@ async function sendVideo(req, res, media, download) {
   let quality = 'original';
   const variantTable = media.mediaColumn === 'movie_id' ? 'movie_video_variants' : 'episode_video_variants';
   if (download) {
-    if (!media.downloads_enabled && req.user.role !== 'admin') {
+    if (!media.downloads_enabled && req.user?.role !== 'admin') {
       return res.status(403).json({ error: 'Downloads are not enabled for this title.' });
     }
     quality = req.query.quality || (media.video_path ? 'original' : '720p');
@@ -166,8 +169,10 @@ async function sendVideo(req, res, media, download) {
   }
 
   if (download) {
-    await pool.execute(`INSERT INTO downloads (user_id, ${media.mediaColumn}, quality) VALUES (?, ?, ?)`,
-      [req.user.id, media.id, quality]);
+    if (req.user) {
+      await pool.execute(`INSERT INTO downloads (user_id, ${media.mediaColumn}, quality) VALUES (?, ?, ?)`,
+        [req.user.id, media.id, quality]);
+    }
     res.set('Content-Disposition', `attachment; filename="${path.basename(media.title).replace(/[\r\n"\\]/g, '_')}${path.extname(file)}"`);
   }
 
@@ -194,7 +199,7 @@ router.get('/images/:filename', asyncHandler(async (req, res) => {
   });
 }));
 
-router.get('/subtitles/:id', requireAuth, asyncHandler(async (req, res) => {
+router.get('/subtitles/:id', optionalAuth, asyncHandler(async (req, res) => {
   const [rows] = await pool.execute(`SELECT st.file_path, m.is_published AS movie_published,
     e.is_published AS episode_published, sr.is_published AS series_published
     FROM subtitles st LEFT JOIN movies m ON m.id = st.movie_id
@@ -207,7 +212,7 @@ router.get('/subtitles/:id', requireAuth, asyncHandler(async (req, res) => {
   const isPublished = subtitle.movie_published !== null
     ? Boolean(subtitle.movie_published)
     : Boolean(subtitle.episode_published && subtitle.series_published);
-  if (!isPublished && req.user.role !== 'admin') {
+  if (!isPublished && req.user?.role !== 'admin') {
     return res.status(404).json({ error: 'Published subtitle not found.' });
   }
   const filename = path.basename(subtitle.file_path);
@@ -221,13 +226,13 @@ router.get('/subtitles/:id', requireAuth, asyncHandler(async (req, res) => {
   });
 }));
 
-router.get('/:kind/:id/stream', requireAuth, asyncHandler(async (req, res) => {
+router.get('/:kind/:id/stream', optionalAuth, asyncHandler(async (req, res) => {
   const media = await resolveMedia(req.params.kind, req.params.id, req.user);
   if (!media) return res.status(404).json({ error: 'Published media not found.' });
   await sendVideo(req, res, media, false);
 }));
 
-router.get('/:kind/:id/download', requireAuth, asyncHandler(async (req, res) => {
+router.get('/:kind/:id/download', optionalAuth, asyncHandler(async (req, res) => {
   const media = await resolveMedia(req.params.kind, req.params.id, req.user);
   if (!media) return res.status(404).json({ error: 'Published media not found.' });
   await sendVideo(req, res, media, true);

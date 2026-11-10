@@ -103,18 +103,38 @@ try {
       AND TRIM(m.subtitle_translator_name) <> ''`);
   await connection.query(`CREATE TABLE IF NOT EXISTS \`${database}\`.comments (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT UNSIGNED NOT NULL,
+    user_id BIGINT UNSIGNED NULL,
+    guest_name VARCHAR(100) NOT NULL DEFAULT '',
+    guest_email VARCHAR(254) NOT NULL DEFAULT '',
     movie_id BIGINT UNSIGNED NULL,
     episode_id BIGINT UNSIGNED NULL,
     body TEXT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_comments_movie (movie_id, created_at),
     INDEX idx_comments_episode (episode_id, created_at),
-    CONSTRAINT fk_comments_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_comments_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
     CONSTRAINT fk_comments_movie FOREIGN KEY (movie_id) REFERENCES movies(id) ON DELETE CASCADE,
     CONSTRAINT fk_comments_episode FOREIGN KEY (episode_id) REFERENCES episodes(id) ON DELETE CASCADE,
     CONSTRAINT chk_comments_media CHECK ((movie_id IS NULL) <> (episode_id IS NULL))
   )`);
+  const [commentColumns] = await connection.execute(
+    `SELECT COLUMN_NAME, IS_NULLABLE FROM information_schema.COLUMNS
+      WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'comments'
+        AND COLUMN_NAME IN ('user_id', 'guest_name', 'guest_email')`,
+    [database]
+  );
+  const commentColumnMap = new Map(commentColumns.map((col) => [col.COLUMN_NAME, col.IS_NULLABLE]));
+  if (!commentColumnMap.has('guest_name')) {
+    await connection.query(`ALTER TABLE \`${database}\`.comments ADD COLUMN guest_name VARCHAR(100) NOT NULL DEFAULT ''`);
+  }
+  if (!commentColumnMap.has('guest_email')) {
+    await connection.query(`ALTER TABLE \`${database}\`.comments ADD COLUMN guest_email VARCHAR(254) NOT NULL DEFAULT ''`);
+  }
+  if (commentColumnMap.get('user_id') === 'NO') {
+    await connection.query(`ALTER TABLE \`${database}\`.comments DROP FOREIGN KEY fk_comments_user`);
+    await connection.query(`ALTER TABLE \`${database}\`.comments MODIFY user_id BIGINT UNSIGNED NULL`);
+    await connection.query(`ALTER TABLE \`${database}\`.comments ADD CONSTRAINT fk_comments_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL`);
+  }
   console.log(`Database schema is ready: ${database}`);
 } finally {
   await connection.end();

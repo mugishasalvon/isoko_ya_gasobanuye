@@ -214,14 +214,16 @@ CREATE TABLE IF NOT EXISTS subtitles (
 
 CREATE TABLE IF NOT EXISTS comments (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  user_id BIGINT UNSIGNED NOT NULL,
+  user_id BIGINT UNSIGNED NULL,
+  guest_name VARCHAR(100) NOT NULL DEFAULT '',
+  guest_email VARCHAR(254) NOT NULL DEFAULT '',
   movie_id BIGINT UNSIGNED NULL,
   episode_id BIGINT UNSIGNED NULL,
   body TEXT NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_comments_movie (movie_id, created_at),
   INDEX idx_comments_episode (episode_id, created_at),
-  CONSTRAINT fk_comments_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_comments_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
   CONSTRAINT fk_comments_movie FOREIGN KEY (movie_id) REFERENCES movies(id) ON DELETE CASCADE,
   CONSTRAINT fk_comments_episode FOREIGN KEY (episode_id) REFERENCES episodes(id) ON DELETE CASCADE,
   CONSTRAINT chk_comments_media CHECK ((movie_id IS NULL) <> (episode_id IS NULL))

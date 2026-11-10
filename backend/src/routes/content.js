@@ -1,7 +1,9 @@
 import { Router } from 'express';
+import { z } from 'zod';
 import { pool } from '../db/pool.js';
 import { asyncHandler } from '../lib/async-handler.js';
 import { withEpisodeRelations, withMovieRelations, withSeriesGenres } from '../lib/content-relations.js';
+import { optionalAuth } from '../middleware/auth.js';
 
 const router = Router();
 const movieFields = `m.id, m.slug, m.title, m.description, m.release_year, m.duration_minutes,
@@ -369,6 +371,56 @@ router.get('/episodes/:id', asyncHandler(async (req, res) => {
 router.get('/categories', asyncHandler(async (_req, res) => {
   const [items] = await pool.query('SELECT id, name, slug FROM categories ORDER BY name');
   res.json({ items });
+}));
+
+router.get('/comments/:kind/:id', asyncHandler(async (req, res) => {
+  const kind = req.params.kind;
+  if (!['movie', 'episode'].includes(kind)) return res.status(400).json({ error: 'Invalid content type.' });
+  const id = z.coerce.number().int().positive().parse(req.params.id);
+  const column = kind === 'movie' ? 'movie_id' : 'episode_id';
+  const [items] = await pool.execute(`SELECT c.id, c.body, c.created_at,
+    COALESCE(NULLIF(c.guest_name, ''), u.name) AS user_name,
+    u.email AS user_email,
+    (u.id IS NOT NULL AND u.role = 'admin') AS is_admin
+    FROM comments c LEFT JOIN users u ON u.id = c.user_id
+    WHERE c.${column} = ? ORDER BY is_admin DESC, c.created_at DESC LIMIT 100`, [id]);
+  res.json({ items: items.map((item) => ({ ...item, is_admin: Boolean(item.is_admin) })) });
+}));
+
+router.post('/comments/:kind/:id', optionalAuth, asyncHandler(async (req, res) => {
+  const kind = req.params.kind;
+  if (!['movie', 'episode'].includes(kind)) return res.status(400).json({ error: 'Invalid content type.' });
+  const id = z.coerce.number().int().positive().parse(req.params.id);
+  const isAdmin = req.user?.role === 'admin';
+  const guestInput = z.object({
+    name: z.string().trim().min(1).max(100),
+    email: z.string().trim().email().max(254),
+    body: z.string().trim().min(1).max(2000)
+  });
+  const adminInput = z.object({
+    body: z.string().trim().min(1).max(2000)
+  });
+  const parsed = isAdmin ? adminInput.parse(req.body) : guestInput.parse(req.body);
+  const table = kind === 'movie' ? 'movies' : 'episodes';
+  const [content] = await pool.execute(`SELECT id FROM ${table} WHERE id = ? LIMIT 1`, [id]);
+  if (!content[0]) return res.status(404).json({ error: 'Content not found.' });
+  const column = kind === 'movie' ? 'movie_id' : 'episode_id';
+  const [result] = isAdmin
+    ? await pool.execute(
+      `INSERT INTO comments (user_id, ${column}, guest_name, guest_email, body) VALUES (?, ?, '', '', ?)`,
+      [req.user.id, id, parsed.body]
+    )
+    : await pool.execute(
+      `INSERT INTO comments (${column}, guest_name, guest_email, body) VALUES (?, ?, ?, ?)`,
+      [id, parsed.name, parsed.email.toLowerCase(), parsed.body]
+    );
+  const [rows] = await pool.execute(`SELECT c.id, c.body, c.created_at,
+    COALESCE(NULLIF(c.guest_name, ''), u.name) AS user_name,
+    u.email AS user_email,
+    (u.id IS NOT NULL AND u.role = 'admin') AS is_admin
+    FROM comments c LEFT JOIN users u ON u.id = c.user_id WHERE c.id = ? LIMIT 1`, [result.insertId]);
+  const item = rows[0];
+  res.status(201).json({ item: { ...item, is_admin: Boolean(item.is_admin) } });
 }));
 
 export default router;
