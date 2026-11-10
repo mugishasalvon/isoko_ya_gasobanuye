@@ -99,14 +99,14 @@ function Header() {
         <div className="header-actions">
           <SearchBox className="search-form" placeholder="Search movies, people..." showShortcut
             onNavigate={() => setMenuOpen(false)} />
-          {user ? (
+          {user && (
             <div className="account-menu">
               <Link to="/profile" className="avatar-link" aria-label="Your profile">
                 <span className="avatar">{user.name?.slice(0, 1).toUpperCase() || <UserRound size={17} />}</span>
               </Link>
               <button className="text-button signout-button" onClick={signOut}>Sign out</button>
             </div>
-          ) : <div className="account-menu"><Link className="button button-small button-muted login-link" to="/login">Admin sign in</Link></div>}
+          )}
         </div>
       </div>
     </header>
@@ -250,8 +250,8 @@ function Footer() {
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 2a9.94 9.94 0 0 0-8.5 15.12L2 22l4.99-1.5A9.95 9.95 0 1 0 12.04 2Zm0 18.2a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-2.96.89.9-2.88-.2-.3a8.24 8.24 0 1 1 6.74 3.61Zm4.52-6.17c-.25-.13-1.47-.73-1.7-.81-.23-.09-.4-.13-.56.12-.17.25-.64.81-.79.98-.14.16-.29.19-.54.06-.25-.12-1.05-.39-2-1.23a7.5 7.5 0 0 1-1.38-1.72c-.15-.25-.02-.39.1-.51.12-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.16.04-.31-.02-.43-.06-.13-.56-1.36-.77-1.86-.2-.48-.41-.41-.56-.42h-.48c-.17 0-.43.06-.66.31-.23.25-.87.85-.87 2.07s.89 2.4 1.02 2.56c.12.17 1.75 2.67 4.24 3.75.59.25 1.05.4 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.2-.58.2-1.07.14-1.18-.06-.1-.23-.16-.48-.29Z"/></svg>
         </a>
       </div>
-      <div className="site-subfooter"><small>© 2026 iSOKO Y' AGASOBANUYE</small></div>
       <MobileBottomNav />
+      <div className="site-subfooter"><small>© 2026 iSOKO Y' AGASOBANUYE</small></div>
     </footer>
   );
 }
@@ -701,10 +701,15 @@ function SearchPage() {
 }
 
 function AuthPage() {
-  const { setUser } = useAuth();
+  const { user, setUser } = useAuth();
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user?.role === 'admin') navigate('/admin', { replace: true });
+  }, [navigate, user]);
+
   const submit = async (event) => {
     event.preventDefault();
     setBusy(true);
